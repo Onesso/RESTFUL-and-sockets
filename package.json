@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "NOTE: this is a describtion of how to build a backend with Prisma as (ORM) and socket (for real time communication) using javascript as the language, Express.js and the database is MongoDB.",
   "main": "app.js",
-  "types": "module",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,7 +14,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  
   "bugs": {
     "url": "https://github.com/Onesso/RESTFUL-and-sockets/issues"
   },
