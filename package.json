@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/Onesso/RESTFUL-and-sockets/issues"
   },
-  "homepage": "https://github.com/Onesso/RESTFUL-and-sockets#readme"
+  "homepage": "https://github.com/Onesso/RESTFUL-and-sockets#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
