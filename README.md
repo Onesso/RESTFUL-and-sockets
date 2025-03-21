@@ -95,3 +95,12 @@ this packages will create a prisma dir and .env file
 inside schema.prisma we'll write the schema
 
 after any change schema.prisma you run: npx prisma db push
+
+create a prisma client inside lib/prisma.js
+
+and install prisma client: npm install @prisma/client
+
+### what is prisma/client?
+it is one of the core components of prisma orm, It abstracts away raw SQL queries or complex MongoDB queries, making it easier to work with your database.
+
+import the PrismaClient file to the auth.controller.js
