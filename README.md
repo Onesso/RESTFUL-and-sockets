@@ -72,4 +72,22 @@ so once we have gotten the data; we'll hash the password, create a new user and 
 
 we'll have to use a library for the hashing therefore "npm install bcrypt"
 
-1.  Destructure the data from the request body
+1.  chaeck if we have receided the json data in the request body
+
+2.  destructure the request body
+
+3.  Hash the password
+
+to hash the password we'll be using bcrypt
+
+4.  Save the user to the database
+
+to save the user we must have the database therefore we'll install prisma(Our ORM):
+
+npm install prisma
+
+    then
+
+npx prisma init --datasource-provider mongodb
+
+this packages will create a prisma dir and .env file 
