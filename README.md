@@ -67,7 +67,9 @@ the authentification is subivided into three endpoints
 
 to enable this endpoint we must have some database functions(that performs the verification logic).
 
-we'll create another dir (controller) it here where we'll write the function logic. and exported to router functions
+we'll create another dir (controller) it here where we'll write the function logic. and exported to router functions.
+
+the flow structure is app.js(app.use("/api/auth", authRoute)) => auth.router.js(router.post("/Register", register)) => auth.controller.js(export const register = async (req, res) =>{})
 
 
 
