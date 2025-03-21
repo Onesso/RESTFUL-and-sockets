@@ -67,7 +67,9 @@ the authentification is subivided into three endpoints
 
 to enable this endpoint we must have some database functions(that performs the verification logic).
 
-Therefore we'll create another dir (controller)
+we'll create another dir (controller) it here where we'll write the function logic. and exported to router functions
+
+
 
 
 
