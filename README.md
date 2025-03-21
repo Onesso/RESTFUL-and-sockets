@@ -18,6 +18,12 @@ Create a .gitignore file and add nodules there
 
 on app.js import , create an express app and listen to a port
 
+use third party libraries to anable the server to alway listen and detect any change to our code: npm install nodemon
+
+we will console ninja and nodemon instaed of the terminal and this is how it is activate them: console-ninja node --watch app.js
+
+if having issues with consoloe ninja in the package.json file add a script: "start": "nodemon app.js"  ,nodemon will anable the server to  always listening respond to change.
+
 
 
 
