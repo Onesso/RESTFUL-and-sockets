@@ -90,4 +90,8 @@ npm install prisma
 
 npx prisma init --datasource-provider mongodb
 
-this packages will create a prisma dir and .env file 
+this packages will create a prisma dir and .env file
+
+inside schema.prisma we'll write the schema
+
+after any change schema.prisma you run: npx prisma db push
