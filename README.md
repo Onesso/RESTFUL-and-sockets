@@ -54,6 +54,10 @@ creating all the endpoint inside the app.js is untidy and can resultst to confus
 
 and inside the dir we'll create different files for different endpoint
 
+example we'll import express and call express.Router() to create request (endpoints)
+
+and after having your router,  "express default router;"
+
 
 
 

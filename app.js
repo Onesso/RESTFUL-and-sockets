@@ -1,13 +1,10 @@
-import express from 'express';
+import express from "express";
+import postRoutes from "./routes/post.routes.js";
 
 const app = express();
 
+app.use("/api/posts", postRoutes);
 
-app.use("/api/get", (req, res) => {
-    res.send("hello mofaka")
-})
-
-
-app.listen(8800, ()=>{
-    console.log("server is running on port 8800")
-})
+app.listen(8800, () => {
+  console.log("server is running on port 8800");
+});
