@@ -67,3 +67,9 @@ for a user to be registered he must send his credentials in the request body
 for the testing api we'll use postman, we'll create a collection, inside the collection we'll create a folder named auth and inside the folder well have our auth api i.e. POST register that has a json file in the request body
 
 our server will receive the request body has json therefore we'll have to use json in our server to be able to read the json data hence inside the app.js we'll add " app.use(express.json) "
+
+so once we have gotten the data; we'll hash the password, create a new user and save the new user to the database.
+
+we'll have to use a library for the hashing therefore "npm install bcrypt"
+
+1.  Destructure the data from the request body
