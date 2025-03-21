@@ -58,6 +58,16 @@ example we'll import express and call express.Router() to create request (endpoi
 
 and after having your router,  "express default router;"
 
+# Building the authentification endpoint
+
+the authentification is subivided into three endpoints
+            1.  Register
+            2.  Login
+            3.  Logout
+
+to enable this endpoint we must have some database functions(that performs the verification logic).
+
+Therefore we'll create another dir (controller)
 
 
 
