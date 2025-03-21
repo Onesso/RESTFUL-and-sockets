@@ -24,6 +24,36 @@ we will console ninja and nodemon instaed of the terminal and this is how it is 
 
 if having issues with consoloe ninja in the package.json file add a script: "start": "nodemon app.js"  ,nodemon will anable the server to  always listening respond to change.
 
+# Database structure and relationships
+
+this are the table(databases).
+        1.  user
+        2.  post
+        3.  postDetails
+        4.  savedPost
+        5.  chat
+        6.  messaget
+
+
+## RelationShips
+
+    1.  each user can have multiple post
+    2.  each post hase multiple details
+    3.  a single user can save multiple post
+    4.  Each post can be save multiple times
+    5.  A single user can have multiple chat
+    6.  inside chat we can have multiple messages
+
+
+# Building endpoints
+
+lets create our first endpoint that will return a test.
+
+
+creating all the endpoint inside the app.js is untidy and can resultst to confusion therefore we'll create a different dir (routes) for the endpoint.
+
+and inside the dir we'll create different files for different endpoint
+
 
 
 
