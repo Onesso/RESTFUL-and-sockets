@@ -1,5 +1,10 @@
 import bcrypt from "bcrypt";
 import prisma from "../lib/prisma.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
+
+export const jsonwebtokensecretkey = "damnfuckingshitdotenvisnotworking";
 
 export const register = async (req, res) => {
   try {
@@ -56,8 +61,19 @@ export const login = async (req, res) => {
     // send the cookie to the client with the response;
 
     const age = 1000 * 60 * 60 * 24 * 7; // miliseconds converted to a week
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+      },
+      jsonwebtokensecretkey,
+      {
+        expiresIn: age,
+      }
+    );
+
     res
-      .cookie("test", "myValue", {
+      .cookie("token", token, {
         httpOnly: true,
         // secure: true,  set to true in production use https
         maxAge: age,

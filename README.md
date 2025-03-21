@@ -123,4 +123,14 @@ in short the server generates the cookie and sends it to the client; so that the
 import the middleware in app.js and call it(use it)
 
 
+instead of using the wording "test" "myValue" to generate let use JWT (json web token)  "token" token
+
+install the package: npm install jsonwebtoken
+
+And create the token, using the built in function .sign() which takes the payload, secrete and options
+
+where
+
+    1.  Payload = user.id
+    2.  Secrete = random generated strings store in the .env file(having problem with retriving the secre)
 
