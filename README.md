@@ -1,8 +1,9 @@
 # Description
+
 NOTE: this is a describtion of how to build a backend with Prisma as (ORM) and socket (for real time communication) using javascript as the language, Express.js and the database is MongoDB.
 
-
 # initialize and set up the project
+
 app.js in the main application for my backend; it is the file that is going to run the express app
 
 initialize (install) node js to our project: npm init -y
@@ -22,18 +23,11 @@ use third party libraries to anable the server to alway listen and detect any ch
 
 we will console ninja and nodemon instaed of the terminal and this is how it is activate them: console-ninja node --watch app.js
 
-if having issues with consoloe ninja in the package.json file add a script: "start": "nodemon app.js"  ,nodemon will anable the server to  always listening respond to change.
+if having issues with consoloe ninja in the package.json file add a script: "start": "nodemon app.js" ,nodemon will anable the server to always listening respond to change.
 
 # Database structure and relationships
 
-this are the table(databases).
-        1.  user
-        2.  post
-        3.  postDetails
-        4.  savedPost
-        5.  chat
-        6.  messaget
-
+this are the table(databases). 1. user 2. post 3. postDetails 4. savedPost 5. chat 6. messaget
 
 ## RelationShips
 
@@ -44,11 +38,9 @@ this are the table(databases).
     5.  A single user can have multiple chat
     6.  inside chat we can have multiple messages
 
-
 # Building endpoints
 
 lets create our first endpoint that will return a test.
-
 
 creating all the endpoint inside the app.js is untidy and can resultst to confusion therefore we'll create a different dir (routes) for the endpoint.
 
@@ -56,14 +48,11 @@ and inside the dir we'll create different files for different endpoint
 
 example we'll import express and call express.Router() to create request (endpoints)
 
-and after having your router,  "express default router;"
+and after having your router, "express default router;"
 
 # Building the authentification endpoint
 
-the authentification is subivided into three endpoints
-            1.  Register
-            2.  Login
-            3.  Logout
+the authentification is subivided into three endpoints 1. Register 2. Login 3. Logout
 
 to enable this endpoint we must have some database functions(that performs the verification logic).
 
@@ -71,8 +60,10 @@ we'll create another dir (controller) it here where we'll write the function log
 
 the flow structure is app.js(app.use("/api/auth", authRoute)) => auth.router.js(router.post("/Register", register)) => auth.controller.js(export const register = async (req, res) =>{})
 
+## Register
 
+for a user to be registered he must send his credentials in the request body
 
+for the testing api we'll use postman, we'll create a collection, inside the collection we'll create a folder named auth and inside the folder well have our auth api i.e. POST register that has a json file in the request body
 
-
-
+our server will receive the request body has json therefore we'll have to use json in our server to be able to read the json data hence inside the app.js we'll add " app.use(express.json) "

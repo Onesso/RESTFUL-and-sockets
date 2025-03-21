@@ -1,6 +1,5 @@
 export const register = async (req, res) =>{
-    console.log("register route");
-    res.send("register route");
+    console.log(req.body)
 };
 export const login = async (req, res) =>{};
 export const logout = async (req, res) =>{};
