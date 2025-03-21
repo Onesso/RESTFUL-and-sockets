@@ -30,5 +30,43 @@ export const register = async (req, res) => {
     return res.status(500).json({ message: "Failed to create user" });
   }
 };
-export const login = async (req, res) => {};
+export const login = async (req, res) => {
+  try {
+    //1. get the data from the client and destructure it
+    const { username, password } = req.body;
+
+    //2. check if the user exists
+    const user = await prisma.user.findUnique({
+      where: {
+        username: username,
+      },
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    //3. compare the provided password with the hashed password
+    const ispasswordValid = await bcrypt.compare(password, user.password);
+    if (!ispasswordValid) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    //4. create a cookie
+    // send the cookie to the client with the response;
+
+    const age = 1000 * 60 * 60 * 24 * 7; // miliseconds converted to a week
+    res
+      .cookie("test", "myValue", {
+        httpOnly: true,
+        // secure: true,  set to true in production use https
+        maxAge: age,
+      })
+      .status(200)
+      .json({ message: "Login successfull" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Failed to login" });
+  }
+};
 export const logout = async (req, res) => {};

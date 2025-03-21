@@ -104,3 +104,23 @@ and install prisma client: npm install @prisma/client
 it is one of the core components of prisma orm, It abstracts away raw SQL queries or complex MongoDB queries, making it easier to work with your database.
 
 import the PrismaClient file to the auth.controller.js
+
+## Login
+To accomplish the login funtionality we recquire the usename and password and this is gotten from the request body.
+
+first we check if the username exist in the database
+
+second we compare the password received and the on store in the data base by use of bcrypt.compare
+
+now if the password and user name is correct we'll generate a cookie token and send it to the client
+
+the browser we'll be sending the cookie in every request, to make the cookie easly understandable we must change the formart of the cookie, therfore we'll parse the cookie using the cookie-parser middleware which is an express middleware.
+
+in short the server generates the cookie and sends it to the client; so that the client will use it to make authenticated requests. But for the server ti be able a read the cookie it must parse it(change format).
+
+: npm install cookie-parser
+
+import the middleware in app.js and call it(use it)
+
+
+
