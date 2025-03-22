@@ -36,10 +36,9 @@ export const register = async (req, res) => {
   }
 };
 export const login = async (req, res) => {
+  //1. get the data from the client and destructure it
+  const { username, password } = req.body;
   try {
-    //1. get the data from the client and destructure it
-    const { username, password } = req.body;
-
     //2. check if the user exists
     const user = await prisma.user.findUnique({
       where: {
@@ -72,6 +71,8 @@ export const login = async (req, res) => {
       }
     );
 
+    const { password: userpassword, ...userInfo } = user; //living the password and returing the rest of the user info to the client
+
     res
       .cookie("token", token, {
         httpOnly: true,
@@ -79,10 +80,20 @@ export const login = async (req, res) => {
         maxAge: age,
       })
       .status(200)
-      .json({ message: "Login successfull" });
+      .json({ userInfo });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Failed to login" });
   }
 };
-export const logout = async (req, res) => {};
+export const logout = async (req, res) => {
+  try {
+    res
+      .clearCookie("token")
+      .status(200)
+      .json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Failed to logout" });
+  }
+};

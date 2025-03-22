@@ -134,3 +134,15 @@ where
     1.  Payload = user.id
     2.  Secrete = random generated strings store in the .env file(having problem with retriving the secre)
 
+
+
+## Logout
+
+for the logout process we'll be deleting token stored in the client.
+we are sending a responce to tell the browser to delete the token stored
+
+
+
+NOTE: To enable our front-end to make authentifaction request, we are going to use cors (Cross-Origin Resource Sharing).
+      This telss the server that a specific client will be making request and to allow it to make the request.
+
