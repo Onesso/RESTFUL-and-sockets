@@ -146,3 +146,14 @@ we are sending a responce to tell the browser to delete the token stored
 NOTE: To enable our front-end to make authentifaction request, we are going to use cors (Cross-Origin Resource Sharing).
       This telss the server that a specific client will be making request and to allow it to make the request.
 
+
+
+# Test route
+we are creating a test endpoint which has two routes namnely shouldbeloggedin and shouldbeadmin
+
+## shouldbeloggedin(controller)
+first we should get the token and verify the token
+
+to verify the token we require; the token, the user credential we used to create the token(payload)
+Now we'll either return if the token is valid or not
+
