@@ -160,3 +160,19 @@ Now we'll either return if the token is valid or not
 ## shouldbeadmin
 similar to shouldbeloggedin we first get the token, verify the token and check the payload if is admin or not
 
+
+
+NOTE: To prevent repetition we should create a middleware for authorization and authentification.
+
+    so middleware allows us to hijack(cut/interrapt) a process perform verification and continue the process. this is made posible by the "next()" built in functionality.
+
+# Implimenting middleware
+
+impimenting a middleware that will perform the verification
+middlewares are not async functions.
+
+in the recent case our middleware has performed the authentification process and said "next()" i.e. the process should continue to the controller.
+
+To proof that the process work we have requested payload for user id and we are able to print the Id at the controllers point.
+
+
