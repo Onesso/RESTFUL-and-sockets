@@ -157,3 +157,6 @@ first we should get the token and verify the token
 to verify the token we require; the token, the user credential we used to create the token(payload)
 Now we'll either return if the token is valid or not
 
+## shouldbeadmin
+similar to shouldbeloggedin we first get the token, verify the token and check the payload if is admin or not
+
