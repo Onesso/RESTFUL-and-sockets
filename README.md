@@ -176,8 +176,31 @@ in the recent case our middleware has performed the authentification process and
 To proof that the process work we have requested payload for user id and we are able to print the Id at the controllers point.
 
 
-# user.routes.js
+# Performing CRUD operations on the user profile
 
-this is a route just like app.js but it handles only the CRUD Operations to the user
+## user.routes.js
+
+this is a route just like auth.route.js, but it handles only the CRUD Operations to the user
+
+the middleware {verifyToken} is applied to the routes.
+
+importance of the middleware it reduces repetition and makes modulations achieved
+
+
+
+## user.controller.js
+
+Here is where we are writing the logic of CRUD operations
+
+we have different ways of extracting data from the request
+
+    1.  query parameters or URL
+        example:
+            const id = req.query.id;
+            const id = req.params.id;
+
+    2.  request body (the data is sent in the request body)
+        example:
+            const id  = req.body
 
 
