@@ -204,3 +204,15 @@ we have different ways of extracting data from the request
             const id  = req.body
 
 
+### Update User
+on updating the user we must verify if the one making the request is the owner.
+
+so in every update request we are making we are sending an id to identify what we want to update.
+
+and in every request you must be authenticated, the authentification is throught the token, whereby it has a user id.
+
+so we'll be comparing the user id from the token and that sent in the request params if they are similar hences certaining you are the owner of the account hence you can update the account.
+
+NOTE: The unique identifyier in prisma in on the First name only.
+
+
