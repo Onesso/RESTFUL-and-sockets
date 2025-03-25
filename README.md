@@ -215,4 +215,10 @@ so we'll be comparing the user id from the token and that sent in the request pa
 
 NOTE: The unique identifyier in prisma in on the First name only.
 
+For updating passwords is different, how?
+
+first password is gotten separatly than the rest of the body:
+
+then when updating we are updating the rest of the body then if we have a password we update the password.
+
 

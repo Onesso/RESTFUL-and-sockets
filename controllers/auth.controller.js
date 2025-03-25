@@ -82,12 +82,13 @@ export const login = async (req, res) => {
         maxAge: age,
       })
       .status(200)
-      .json({ userInfo });
+      .json(userInfo);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Failed to login" });
   }
 };
+
 export const logout = async (req, res) => {
   try {
     res
