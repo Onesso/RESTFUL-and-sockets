@@ -14,7 +14,7 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/posts", postRoutes);
+app.use("/api/post", postRoutes);
 app.use("/api/auth", authRoute);
 app.use("/api/test", testRoute);
 app.use("/api/user", userRoute);

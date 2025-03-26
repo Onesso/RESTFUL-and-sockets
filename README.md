@@ -221,4 +221,6 @@ first password is gotten separatly than the rest of the body:
 
 then when updating we are updating the rest of the body then if we have a password we update the password.
 
+# performance of crud operation to Post
+
 
