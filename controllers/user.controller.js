@@ -70,7 +70,7 @@ export const updateUser = async (req, res) => {
     });
 
     //to prevent sending password to the user
-    const {password: userPassword, ...rest} = updateduser;
+    const { password: userPassword, ...rest } = updateduser;
 
     res.status(200).json(rest);
   } catch (error) {
@@ -93,5 +93,63 @@ export const deleteUser = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Failed to delete users" });
+  }
+};
+
+export const savePost = async (req, res) => {
+  const postId = req.body.postId;
+  const tokenUserId = req.userID;
+  try {
+    //searching for the post we want to save and its associated user
+    const savedPost = await prisma.savedPost.findUnique({
+      where: {
+        userId_postId: {
+          userId: tokenUserId,
+          postId,
+        },
+      },
+    });
+
+    //the logic is that when you reach savepost, it saves the specific post and when you reach the endpoint again it deletes the post.
+    if (savedPost) {
+      await prisma.savedPost.delete({
+        where: {
+          id: savedPost.id,
+        },
+      });
+      return res.status(200).json({ message: "post removed from saved list" });
+    } else {
+      await prisma.savedPost.create({
+        data: {
+          userId: tokenUserId,
+          postId,
+        },
+      });
+      return res.status(200).json({ message: "post saved" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const profilePosts = async (req, res) => {
+  const tokenUserId = req.userID;
+  try {
+    const userPosts = await prisma.post.findMany({
+      where: { userId: tokenUserId },
+    });
+
+    const saved = await prisma.savedPost.findMany({
+      where: { userId: tokenUserId },
+      include: {
+        post: true,
+      },
+    });
+
+    const savedPosts = saved.map((item) => item.post);
+    res.status(200).json({ userPosts, savedPosts });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Failed to get post!" });
   }
 };

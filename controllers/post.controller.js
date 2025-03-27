@@ -1,8 +1,23 @@
 import prisma from "../lib/prisma.js";
+import jwt from "jsonwebtoken";
+import jsonwebtokensecretkey from "../secrete.js";
 
 export const getPosts = async (req, res) => {
+  const query = req.query;
+  console.log(query);
   try {
-    const posts = await prisma.post.findMany();
+    const posts = await prisma.post.findMany({
+      where: {
+        city: query.city || undefined,
+        type: query.type || undefined,
+        property: query.property || undefined,
+        bedroom: parseInt(query.bedroom) || undefined,
+        price: {
+          gte: parseInt(query.minPrice) || undefined,
+          lte: parseInt(query.maxPrice) || undefined,
+        },
+      },
+    });
     res.status(200).json(posts);
   } catch (error) {
     console.log(error);
@@ -24,7 +39,45 @@ export const getPost = async (req, res) => {
         },
       },
     });
-    res.status(200).json(post);
+
+    if (!post) return res.status(404).json({ message: "Page not found" });
+
+    //added code: to check if you are logged in so that you can get your saved post
+    const token = req.cookies?.token;
+    if (!token) return res.status(200).json({ ...post, isSaved: false });
+
+    // Verify token synchronously
+    try {
+      const payload = jwt.verify(token, jsonwebtokensecretkey);
+      const saved = await prisma.savedPost.findUnique({
+        where: {
+          userId_postId: {
+            postId: id,
+            userId: payload.id,
+          },
+        },
+      });
+      return res.status(200).json({ ...post, isSaved: !!saved });
+    } catch (error) {
+      return res.status(200).json({ ...post, isSaved: false });
+    }
+    // if (token) {
+    //   jwt.verify(token, jsonwebtokensecretkey, async (err, payload) => {
+    //     if (!err) {
+    //       const saved = await prisma.savedPost.findUnique({
+    //         where: {
+    //           userId_postId: {
+    //             postId: id,
+    //             userId: payload.id,
+    //           },
+    //         },
+    //       });
+    //       res.status(200).json({ ...post, isSaved: saved ? true : false });
+    //     }
+    //   });
+    // }
+
+    // res.status(200).json({ ...post, isSaved: false });
   } catch (error) {
     console.log(error);
   }
@@ -77,3 +130,4 @@ export const deletePost = async (req, res) => {
     console.log(error);
   }
 };
+
