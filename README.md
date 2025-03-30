@@ -224,3 +224,16 @@ then when updating we are updating the rest of the body then if we have a passwo
 # performance of crud operation to Post
 
 
+
+# Chat with socket.io
+the connection between Message and Chat is a one-to-many relationship, where:
+
+One Chat has many Messages
+
+Each Message belongs to one Chat
+
+This is a typical one-to-many database relationship where messages are stored with a reference to their parent chat, while chats maintain an array-like reference to all their messages.
+
+## Creating routes for the chat and message
+
+

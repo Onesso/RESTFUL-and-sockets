@@ -2,9 +2,9 @@ import prisma from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 
 export const getUsers = async (req, res) => {
-  const users = await prisma.user.findMany();
-  res.status(200).json(users);
   try {
+    const users = await prisma.user.findMany();
+    res.status(200).json(users);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Failed to get users" });
@@ -151,5 +151,27 @@ export const profilePosts = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Failed to get post!" });
+  }
+};
+
+export const getNotificationNumber = async (req, res) => {
+  const tokenUserId = req.userID;
+  try {
+    const number = await prisma.chat.count({
+      where: {
+        userIDs: {
+          hasSome: [tokenUserId],
+        },
+        NOT: {
+          seenBy: {
+            hasSome: [tokenUserId],
+          },
+        },
+      },
+    });
+    res.status(200).json(number);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to get profile posts!" });
   }
 };
