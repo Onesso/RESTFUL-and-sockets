@@ -1,6 +1,7 @@
 import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 import jsonwebtokensecretkey from "../secrete.js";
+import braintree from "braintree";
 
 export const getPosts = async (req, res) => {
   const query = req.query;
@@ -130,4 +131,57 @@ export const deletePost = async (req, res) => {
     console.log(error);
   }
 };
+//payment processing
 
+//account variables
+const BRAINTREE_MERCHANT_ID = "yb7kbmcx42fp45kd";
+const BRAINTREE_PULIC_KEY = "jgt4rm8vvtxt33m5";
+const BRAINTREE_PRIVATE_KEY = "0993c60ff1f861198eacacf3b7c8f9f1";
+
+const gateway = new braintree.BraintreeGateway({
+  environment: braintree.Environment.Sandbox,
+  merchantId: BRAINTREE_MERCHANT_ID,
+  publicKey: BRAINTREE_PULIC_KEY,
+  privateKey: BRAINTREE_PRIVATE_KEY,
+});
+
+export const getToken = async (req, res) => {
+  try {
+    gateway.clientToken.generate({}, function (error, responce) {
+      if (error) {
+        res.status(500).send(error);
+      } else {
+        res.send(responce);
+        // console.log(responce);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const processPayment = async (req, res) => {
+  try {
+    const { nonce, amount } = req.body;
+    console.log("this is the rent: ", amount);
+    const result = await gateway.transaction.sale({
+      amount: amount.toString(),
+      paymentMethodNonce: nonce,
+      options: { submitForSettlement: true },
+    });
+
+    if (result.success) {
+      res.json({ success: true });
+      console.log("went through");
+    } else {
+      console.log("Processor response:", result);
+      res.status(400).json({
+        error: result.message,
+        processorResponse: result.processorResponseText,
+        verification: result.creditCardVerification,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

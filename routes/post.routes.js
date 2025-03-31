@@ -6,6 +6,8 @@ import {
   addPost,
   updatePost,
   deletePost,
+  getToken,
+  processPayment
 
 } from "../controllers/post.controller.js";
 
@@ -16,6 +18,8 @@ router.get("/:id", getPost);
 router.post("/", verifyToken, addPost);
 router.put("/:id", verifyToken, updatePost);
 router.delete("/:id", verifyToken, deletePost);
+router.get("/braintree/token", getToken);
+router.post("/braintree/payment",verifyToken, processPayment);
 
 
 export default router;
