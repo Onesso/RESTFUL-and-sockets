@@ -83,8 +83,10 @@ export const getPost = async (req, res) => {
     console.log(error);
   }
 };
+
 export const addPost = async (req, res) => {
   const body = req.body;
+  console.log("received the requestbody to add post", body);
   const tokenuserId = req.userID;
   try {
     const newPost = await prisma.post.create({
@@ -101,36 +103,119 @@ export const addPost = async (req, res) => {
     console.log(error);
   }
 };
+
 export const updatePost = async (req, res) => {
+  const id = req.params.id;
+  const tokenuserId = req.userID;
+  const { postData, postDetail } = req.body;
+
+  // Input validation
+  if (!postData || typeof postData !== "object") {
+    return res.status(400).json({ message: "Invalid post data" });
+  }
+
   try {
-    res.status(200).json();
+    const post = await prisma.post.findUnique({
+      where: { id: id },
+      include: { postDetail: true },
+    });
+    console.log("Post is found: ", post);
+    if (!post) {
+      console.log("Post not found");
+      return res.status(404).json({ message: "Post not found" });
+    }
+    if (!post.postDetail) console.log("No details available"); // Handle optional case
+    //if the product is found, we are checking if it belong to the user who want to update.
+    if (post.userId !== tokenuserId) {
+      return res.status(403).json({ message: "Not authorized" });
+    } // Update Post
+
+    const updatedPost = await prisma.post.update({
+      where: { id },
+      data: {
+        ...postData,
+      },
+    }); // Update PostDetail if exists
+
+    if (post.postDetail) {
+      await prisma.postDetail.update({
+        where: { postId: id },
+        data: {
+          ...postDetail,
+        },
+      });
+    } else if (postDetail) {
+      // Create new PostDetail if it doesn't exist but postDetail is provided
+      await prisma.postDetail.create({
+        data: {
+          ...postDetail,
+          postId: id,
+        },
+      });
+    }
+
+    res.status(200).json({ message: "Post updated successfully", updatedPost });
+    console.log("Post updated successfully", updatedPost);
   } catch (error) {
-    console.log(error);
+    console.log("Error from updating post: ", error);
+    return res.status(500).json({ message: "Failed to update post" });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
 export const deletePost = async (req, res) => {
   const id = req.params.id;
   const tokenuserId = req.userID;
+
+  console.log("from delete endpoint token id: ", tokenuserId);
+
   try {
     //checking if there is such a product
     const post = await prisma.post.findUnique({
       where: { id: id },
+      include: { postDetail: true },
     });
+
+    console.log("Post is found: ", post);
+
+    if (!post) return res.status(404).json({ message: "Post not found" });
+    if (!post.postDetail) console.log("No details available"); // Handle optional case
 
     //if the product is found, we are checking if it belong to the user who want to update.
     if (post.userId !== tokenuserId) {
       return res.status(403).json({ message: "Not authorized" });
     }
 
+    await prisma.savedPost.deleteMany({ where: { postId: id } }); // delete saved post to
+
+    await prisma.postDetail.deleteMany({
+      where: {
+        postId: id,
+      },
+    });
+
     //delete the post
     await prisma.post.delete({
       where: { id: id },
     });
+    console.log("deleted runned");
     res.status(200).json({ message: "Post deleted" });
   } catch (error) {
-    console.log(error);
+    console.log("error in delete post: ", error);
+    res.status(500).json({ message: "post not deleted" });
   }
 };
+
 //payment processing
 
 //account variables
@@ -163,7 +248,7 @@ export const getToken = async (req, res) => {
 export const processPayment = async (req, res) => {
   try {
     const { nonce, amount } = req.body;
-    console.log("this is the rent: ", amount);
+
     const result = await gateway.transaction.sale({
       amount: amount.toString(),
       paymentMethodNonce: nonce,
@@ -171,17 +256,49 @@ export const processPayment = async (req, res) => {
     });
 
     if (result.success) {
-      res.json({ success: true });
-      console.log("went through");
+      res.json({ success: true, transaction: result.transaction });
+      console.log("went through", result.transaction);
     } else {
-      console.log("Processor response:", result);
+      console.log("Processor response:", result.transaction);
       res.status(400).json({
         error: result.message,
         processorResponse: result.processorResponseText,
-        verification: result.creditCardVerification,
+        // verification: result.creditCardVerification,
       });
     }
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getSettlementReport = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    // Validate dates
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(startDate) ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(endDate)
+    ) {
+      throw new Error("Invalid date format. Use YYYY-MM-DD");
+    }
+
+    const summary = await gateway.settlementBatch.summary(startDate, endDate, {
+      includeRecords: true,
+    });
+
+    res.json({
+      success: true,
+      data: summary,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      debug: {
+        sdkVersion: braintree.version,
+        merchantId: process.env.BRAINTREE_MERCHANT_ID?.slice(0, 4) + "...",
+      },
+    });
   }
 };
