@@ -7,6 +7,7 @@ import userRoute from "./routes/user.routes.js";
 import chatRoute from "./routes/chat.routes.js";
 import messageRoute from "./routes/message.routes.js";
 import mpesaRoute from "./routes/mpesa.routes.js";
+import receiptsRoute from "./routes/receipt.routes.js";
 import dotenv from "dotenv";
 import cors from "cors";
 dotenv.config();
@@ -44,6 +45,7 @@ app.use("/api/user", userRoute);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/mpesa", mpesaRoute);
+app.use("/api/receipt", receiptsRoute);
 
 app.listen(8800, () => {
   console.log("server is running on port 8800");

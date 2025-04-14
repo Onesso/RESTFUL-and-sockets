@@ -25,6 +25,7 @@ model User {
   savedPosts SavedPost[]
   chats Chat[] @relation(fields: [chatIDs], references: [id])
   chatIDs String[] @db.ObjectId
+  receipts Receipt[]
 }
 
 model Post {
@@ -46,6 +47,7 @@ model Post {
   createdAt DateTime @default(now())
   postDetail PostDetail?
   savedPosts SavedPost[]
+  receipts Receipt[]
 }
 
 enum Type {
@@ -105,3 +107,39 @@ model Message {
   createdAt DateTime @default(now())
 }
 
+model Receipt {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Merchant Information
+  merchantName String
+  address String
+
+  // Transaction Information
+  transactionType String  // "rent" or "buy"
+  amount Float
+  paymentMethod String   // "credit_card", etc.
+
+  // Payment Card Details
+  cardType String       // "Visa", "Mastercard", etc.
+  cardNumber String     // Store last 4 digits only (e.g., "•••• 1234")
+  cardholder String
+
+  // Property Information
+  property String
+  propertyType String   // "apartment", "house", etc.
+  propertyPayment String // income/rent amount reference
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+  post Post @relation(fields: [postId], references: [id])
+  postId String @db.ObjectId
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Indexes for faster queries
+  @@index([userId])
+  @@index([postId])
+}
