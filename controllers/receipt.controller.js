@@ -16,7 +16,7 @@ export const createReceipt = async (req, res) => {
     postId,
   } = req.body;
   const userId = req.params.id;
-//   const postId = req.body.postId; // This is the property that the user is renting or buying
+  //   const postId = req.body.postId; // This is the property that the user is renting or buying
   const tokenuserId = req.userID; // This is the buyer/renter of the property => is is from the token.
 
   console.log("received the requestbody to add receipt", req.body);
@@ -60,15 +60,29 @@ export const createReceipt = async (req, res) => {
       },
     });
     res.status(200).json(newReceipt);
-
   } catch (err) {
     console.log(err);
   }
 };
 
 export const deleteReceipt = async (req, res) => {
-    const id = req.params.id
-}
+  const id = req.params.id;
+  try {
+    const receipt = await prisma.receipt.findUnique({
+      where: { id: id },
+    });
+    if (!receipt) {
+      return res.status(404).json({ message: "Receipt not found" });
+    } else {
+      await prisma.receipt.delete({
+        where: { id: id },
+      });
+      res.status(200).json({ message: "Receipt deleted successfully" });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 export const getAllReceipts = async (req, res) => {
   try {
@@ -83,5 +97,3 @@ export const getReceiptById = async (req, res) => {
     console.log(err);
   }
 };
-
-
