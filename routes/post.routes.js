@@ -9,12 +9,16 @@ import {
   getToken,
   processPayment,
   getSettlementReport,
+  checkPropertyStatus,
+  updatePropertyStatus,
 } from "../controllers/post.controller.js";
 
 const router = express.Router();
 
 router.get("/", getPosts);
 router.get("/:id", getPost);
+router.get("/propertystatus/:id", verifyToken, checkPropertyStatus);
+router.patch("/updatePropertyStatus/:id", verifyToken, updatePropertyStatus);
 router.post("/", verifyToken, addPost);
 router.put("/:id", verifyToken, updatePost);
 router.delete("/:id", verifyToken, deletePost);

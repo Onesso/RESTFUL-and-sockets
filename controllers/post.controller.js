@@ -329,3 +329,87 @@ export const getSettlementReport = async (req, res) => {
     });
   }
 };
+
+export const checkPropertyStatus = async (req, res) => {
+  const id = req.params.id;
+  const tokenuserId = req.userID;
+  try {
+   
+    const post = await prisma.post.findUnique({
+      where: { id: id },
+      include: { postDetail: true },
+    });
+    if (!post) {
+      console.log("Post not found; to check if iti is taken or not");
+      return res.status(404).json({ message: "Page not found" });
+    }
+    if (post.userId !== tokenuserId) {
+      console.log("Not authorized to check property status");
+      return res.status(403).json({ message: "Not authorized" });
+    }
+    // check if the post is already taken for
+    if (post.isTaken) {
+      return res.status(200).json({
+        message: "Property is already taken",
+        status: "taken",
+        isTaken: post.isTaken,
+      });
+    } else {
+      return res.status(200).json({
+        message: "Property is available",
+        status: "available",
+        isTaken: post.isTaken,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error; on checking isTaken" });
+  }
+};
+
+export const updatePropertyStatus = async (req, res) => {
+  const id = req.params.id;
+  const tokenuserId = req.userID;
+  const { isTaken } = req.body;
+
+
+
+  // Input validation
+  if (typeof isTaken !== "boolean") {
+    return res.status(400).json({ message: "isTaken must be a boolean value" });
+  }
+
+  try {
+    const post = await prisma.post.findUnique({ where: { id } });
+
+    if (!post) return res.status(404).json({ message: "Page not found" });
+    // Authorization check
+    if (post.userId !== tokenuserId) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+    if (post.isTaken === isTaken) {
+      return res.status(200).json({
+        message: `Property already ${isTaken ? "taken" : "available"}`,
+        post,
+      });
+    }
+
+    const updatedPost = await prisma.post.update({
+      where: { id },
+      data: { isTaken },
+    });
+
+    return res.status(200).json({
+      message: `Property status updated to ${isTaken ? "taken" : "available"}`,
+      post: updatedPost,
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof prisma.PrismaClientKnownRequestError) {
+      return res.status(400).json({ message: "Database error" });
+    }
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
