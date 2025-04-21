@@ -84,14 +84,125 @@ export const deleteReceipt = async (req, res) => {
   }
 };
 
-export const getAllReceipts = async (req, res) => {
+// export const getAllReceiptsBySellerId = async (req, res) => {
+//     const sellerId = req.params.id;
+
+//     try {
+//       // Validate the sellerId exists
+//       if (!sellerId) {
+//         return res.status(400).json({ error: "Seller ID is required" });
+//       }
+
+//       // Check if seller exists
+//       const seller = await prisma.user.findUnique({
+//         where: { id: sellerId }
+//       });
+
+//       if (!seller) {
+//         return res.status(404).json({ error: "Seller not found" });
+//       }
+
+//       // Get all receipts where the post was created by this seller
+//       const receipts = await prisma.receipt.findMany({
+//         where: {
+//           post: {
+//             userId: sellerId
+//           }
+//         },
+//         include: {
+//           post: true,    // Include post details
+//           user: true     // Include buyer details (who made the payment)
+//         },
+//         orderBy: {
+//           createdAt: 'desc' // Newest receipts first
+//         }
+//       });
+
+//       if (receipts.length === 0) {
+//         return res.status(200).json({ message: "No receipts found for this seller", receipts: [] });
+//       }
+
+//       res.status(200).json(receipts);
+//     } catch (err) {
+//       console.log(err);
+//       res.status(500).json({ error: "Internal server error" });
+//     }
+//   };
+
+export const getAllReceiptsBySellerId = async (req, res) => {
+  const sellerId = req.params.id;
+
   try {
+    // 1. Validate input exists and is proper format
+    if (!sellerId) {
+      return res.status(400).json({ error: "Seller ID is required" });
+    }
+
+    // Add MongoDB ObjectID validation
+    if (!/^[0-9a-fA-F]{24}$/.test(sellerId)) {
+      return res.status(400).json({ error: "Invalid Seller ID format" });
+    }
+
+    // 2. Check if seller exists
+    const seller = await prisma.user.findUnique({
+      where: { id: sellerId },
+    });
+
+    if (!seller) {
+      return res.status(404).json({ error: "Seller not found" });
+    }
+
+    // 3. Get all receipts for this seller
+    const receipts = await prisma.receipt.findMany({
+      // Fixed typo from 'receipt' to 'receipt'
+      where: {
+        post: {
+          userId: sellerId,
+        },
+      },
+      include: {
+        post: true, // Include post details
+        user: true, // Include buyer details
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    // 4. Return appropriate response
+    if (receipts.length === 0) {
+      return res.status(200).json({
+        message: "No receipts found for this seller",
+        receipts: [],
+      });
+    }
+
+    res.status(200).json(receipts);
   } catch (err) {
-    console.log(err);
+    console.error("Error in getAllReceiptsBySellerId:", err);
+
+    // Handle specific Prisma errors
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === "P2023") {
+        return res.status(400).json({
+          error: "Invalid ID format",
+          details: err.meta,
+        });
+      }
+      return res.status(500).json({
+        error: "Database error",
+        code: err.code,
+      });
+    }
+
+    // Generic error fallback
+    res.status(500).json({
+      error: "Internal server error",
+      details: err.message,
+    });
   }
 };
-
-export const getReceiptById = async (req, res) => {
+export const getReceipt = async (req, res) => {
   try {
   } catch (err) {
     console.log(err);

@@ -162,25 +162,49 @@ export const updatePost = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
 export const deletePost = async (req, res) => {
   const id = req.params.id;
   const tokenuserId = req.userID;
 
   console.log("from delete endpoint token id: ", tokenuserId);
 
+  // try {
+  //   //checking if there is such a product
+  //   const post = await prisma.post.findUnique({
+  //     where: { id: id },
+  //     include: { postDetail: true },
+  //   });
+
+  //   console.log("Post is found: ", post);
+
+  //   if (!post) return res.status(404).json({ message: "Post not found" });
+  //   if (!post.postDetail) console.log("No details available"); // Handle optional case
+
+  //   //if the product is found, we are checking if it belong to the user who want to update.
+  //   if (post.userId !== tokenuserId) {
+  //     return res.status(403).json({ message: "Not authorized" });
+  //   }
+
+  //   await prisma.savedPost.deleteMany({ where: { postId: id } }); // delete saved post to
+
+  //   await prisma.postDetail.deleteMany({
+  //     where: {
+  //       postId: id,
+  //     },
+  //   });
+
+  //   //delete the post
+  //   await prisma.post.delete({
+  //     where: { id: id },
+  //   });
+  //   console.log("deleted runned");
+  //   res.status(200).json({ message: "Post deleted" });
+  // } catch (error) {
+  //   console.log("error in delete post: ", error);
+  //   res.status(500).json({ message: "post not deleted" });
+  // }
   try {
-    //checking if there is such a product
+    // Check if post exists
     const post = await prisma.post.findUnique({
       where: { id: id },
       include: { postDetail: true },
@@ -189,30 +213,33 @@ export const deletePost = async (req, res) => {
     console.log("Post is found: ", post);
 
     if (!post) return res.status(404).json({ message: "Post not found" });
-    if (!post.postDetail) console.log("No details available"); // Handle optional case
+    if (!post.postDetail) console.log("No details available");
 
-    //if the product is found, we are checking if it belong to the user who want to update.
+    // Authorization check
     if (post.userId !== tokenuserId) {
       return res.status(403).json({ message: "Not authorized" });
     }
 
-    await prisma.savedPost.deleteMany({ where: { postId: id } }); // delete saved post to
+    // Use a transaction to ensure all deletions succeed or fail together
+    await prisma.$transaction([
+      // 1. First delete all receipts associated with this post
+      prisma.receipt.deleteMany({ where: { postId: id } }),
 
-    await prisma.postDetail.deleteMany({
-      where: {
-        postId: id,
-      },
-    });
+      // 2. Delete all saved posts referencing this post
+      prisma.savedPost.deleteMany({ where: { postId: id } }),
 
-    //delete the post
-    await prisma.post.delete({
-      where: { id: id },
-    });
-    console.log("deleted runned");
+      // 3. Delete the post detail if it exists
+      prisma.postDetail.deleteMany({ where: { postId: id } }),
+
+      // 4. Finally delete the post itself
+      prisma.post.delete({ where: { id: id } }),
+    ]);
+
+    console.log("Post and all related data deleted successfully");
     res.status(200).json({ message: "Post deleted" });
   } catch (error) {
-    console.log("error in delete post: ", error);
-    res.status(500).json({ message: "post not deleted" });
+    console.log("Error in delete post: ", error);
+    res.status(500).json({ message: "Failed to delete post" });
   }
 };
 
